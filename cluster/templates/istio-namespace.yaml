@@ -26,11 +26,11 @@ spec:
   destination:
     namespace: istio-system
     server: "{{ .Values.spec.destination.server }}"
-  source:
-    path: ""
-    repoURL: "https://istio-release.storage.googleapis.com/charts"
-    targetRevision: 1.17.1
-    chart: base
+  sources:
+    - path: ""
+      repoURL: "https://istio-release.storage.googleapis.com/charts"
+      targetRevision: 1.17.1
+      chart: base
   project: default
   syncPolicy:
     automated:
@@ -56,11 +56,11 @@ spec:
   destination:
     namespace: istio-system
     server: "{{ .Values.spec.destination.server }}"
-  source:
-    path: ""
-    repoURL: "https://istio-release.storage.googleapis.com/charts"
-    targetRevision: 1.17.1
-    chart: istiod
+  sources:
+    - path: ""
+      repoURL: "https://istio-release.storage.googleapis.com/charts"
+      targetRevision: 1.17.1
+      chart: istiod
   project: default
   syncPolicy:
     automated:
@@ -80,11 +80,11 @@ spec:
   destination:
     namespace: istio-ingress
     server: "{{ .Values.spec.destination.server }}"
-  source:
-    path: ""
-    repoURL: "https://istio-release.storage.googleapis.com/charts"
-    targetRevision: 1.17.1
-    chart: gateway
+  sources:
+    - path: ""
+      repoURL: "https://istio-release.storage.googleapis.com/charts"
+      targetRevision: 1.17.1
+      chart: gateway
   project: default
   syncPolicy:
     automated:
