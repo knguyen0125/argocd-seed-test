@@ -56,4 +56,3 @@ spec:
         automated:
           prune: true
           selfHeal: true
-      ignoreDifferences: "{{`{{.ignoreDifferences}}`}}"
