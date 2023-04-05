@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: metrics-server
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  destination:
+    namespace: kube-system
+    server: "{{ .Values.spec.destination.server }}"
+  sources:
+    - path: ""
+      repoURL: "https://charts.bitnami.com/bitnami"
+      targetRevision: 6.2.15
+      chart: metrics-server
+  project: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
