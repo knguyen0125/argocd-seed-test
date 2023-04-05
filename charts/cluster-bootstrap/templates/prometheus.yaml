@@ -1,14 +1,15 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: keda
+  name: prometheus
   annotations:
     argocd.argoproj.io/sync-wave: "-1"
+    istio-injection: disabled
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: keda
+  name: prometheus
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
@@ -16,13 +17,13 @@ metadata:
     argocd.argoproj.io/sync-wave: "0"
 spec:
   destination:
-    namespace: keda
+    namespace: prometheus
     server: "{{ .Values.spec.destination.server }}"
   sources:
     - path: ""
-      repoURL: "https://kedacore.github.io/charts"
-      targetRevision: 2.10.1
-      chart: keda
+      repoURL: "https://prometheus-community.github.io/helm-charts"
+      targetRevision: 45.9.0
+      chart: kube-prometheus-stack
   project: default
   syncPolicy:
     automated:
