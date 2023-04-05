@@ -10,9 +10,15 @@ spec:
     namespace: argocd
     server: "https://kubernetes.default.svc"
   sources:
-    - path: cluster-bootstrap
+    - path: charts/cluster-bootstrap
       repoURL: "https://github.com/knguyen0125/argocd-seed-test.git"
       targetRevision: HEAD
+      helm:
+        valueFiles:
+          - $values/clusters/seed/values.yaml
+    - repoURL: "https://github.com/knguyen0125/argocd-seed-test.git"
+      targetRevision: HEAD
+      ref: values
   project: default
   syncPolicy:
     automated:
