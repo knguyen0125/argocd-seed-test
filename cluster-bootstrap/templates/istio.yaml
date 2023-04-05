@@ -1,22 +1,14 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: istio-system
+  name: keda
   annotations:
-    argocd.argoproj.io/sync-wave: "-1"
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: istio-ingress
-  annotations:
-    istio-injection: enabled
     argocd.argoproj.io/sync-wave: "-1"
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: istio-base
+  name: keda
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
@@ -24,67 +16,13 @@ metadata:
     argocd.argoproj.io/sync-wave: "0"
 spec:
   destination:
-    namespace: istio-system
+    namespace: keda
     server: "{{ .Values.spec.destination.server }}"
   sources:
     - path: ""
-      repoURL: "https://istio-release.storage.googleapis.com/charts"
-      targetRevision: 1.17.1
-      chart: base
-  project: default
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-  ignoreDifferences:
-    - group: "admissionregistration.k8s.io"
-      kind: ValidatingWebhookConfiguration
-      name: istiod-default-validator
-      jqPathExpressions:
-        - .webhooks[0].failurePolicy
----
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: istiod
-  namespace: argocd
-  finalizers:
-    - resources-finalizer.argocd.argoproj.io
-  annotations:
-    argocd.argoproj.io/sync-wave: "1"
-spec:
-  destination:
-    namespace: istio-system
-    server: "{{ .Values.spec.destination.server }}"
-  sources:
-    - path: ""
-      repoURL: "https://istio-release.storage.googleapis.com/charts"
-      targetRevision: 1.17.1
-      chart: istiod
-  project: default
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
----
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: istio-ingressgateway
-  namespace: argocd
-  finalizers:
-    - resources-finalizer.argocd.argoproj.io
-  annotations:
-    argocd.argoproj.io/sync-wave: "2"
-spec:
-  destination:
-    namespace: istio-ingress
-    server: "{{ .Values.spec.destination.server }}"
-  sources:
-    - path: ""
-      repoURL: "https://istio-release.storage.googleapis.com/charts"
-      targetRevision: 1.17.1
-      chart: gateway
+      repoURL: "https://kedacore.github.io/charts"
+      targetRevision: 2.10.1
+      chart: keda
   project: default
   syncPolicy:
     automated:
