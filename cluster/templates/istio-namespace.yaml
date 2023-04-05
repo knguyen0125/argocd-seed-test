@@ -14,39 +14,79 @@ metadata:
     argocd.argoproj.io/sync-wave: "-1"
 ---
 apiVersion: argoproj.io/v1alpha1
-kind: ApplicationSet
+kind: Application
 metadata:
-  name: istio
+  name: istio-base
   namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
 spec:
-  generators:
-    - list:
-        elements:
-          - chart: istio-base
-            name: istio-base
-            namespace: istio-system
-          - chart: istiod
-            name: istiod
-            namespace: istio-system
-          - chart: gateway
-            name: istio-ingressgateway
-            namespace: istio-ingress
-  template:
-    metadata:
-      name: {{`istio-{{name}}`}}
-      namespace: argocd
-    spec:
-      destination:
-        namespace: "{{`{{namespace}}`}}"
-        server: {{ .Values.spec.destination.server }}
-      project: default
-      sources:
-        - repoURL: "https://istio-release.storage.googleapis.com/charts"
-          targetRevision: 1.17.1
-          chart: "{{`{{chart}}`}}"
-          helm:
-            releaseName: "{{`{{name}}`}}"
-      syncPolicy:
-        automated:
-          prune: true
-          selfHeal: true
+  destination:
+    namespace: istio-system
+    server: "{{ .Values.spec.destination.server }}"
+  source:
+    path: ""
+    repoURL: "https://istio-release.storage.googleapis.com/charts"
+    targetRevision: 1.17.1
+    chart: base
+  project: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+  ignoreDifferences:
+    - group: "admissionregistration.k8s.io"
+      kind: ValidatingWebhookConfiguration
+      name: istiod-default-validator
+      jqPathExpressions:
+        - .webhooks[0].failurePolicy
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: istiod
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  destination:
+    namespace: istio-system
+    server: "{{ .Values.spec.destination.server }}"
+  source:
+    path: ""
+    repoURL: "https://istio-release.storage.googleapis.com/charts"
+    targetRevision: 1.17.1
+    chart: istiod
+  project: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: istio-ingressgateway
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  destination:
+    namespace: istio-ingress
+    server: "{{ .Values.spec.destination.server }}"
+  source:
+    path: ""
+    repoURL: "https://istio-release.storage.googleapis.com/charts"
+    targetRevision: 1.17.1
+    chart: gateway
+  project: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
