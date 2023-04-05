@@ -28,12 +28,6 @@ spec:
           - chart: istiod
             name: istiod
             namespace: istio-system
-            ignoreDifferences:
-              - group: "admissionregistration.k8s.io"
-                kind: ValidatingWebhookConfiguration
-                name: istiod-default-validator
-                jqPathExpressions:
-                  - .webhooks[0].failurePolicy
           - chart: gateway
             name: istio-ingressgateway
             namespace: istio-ingress
