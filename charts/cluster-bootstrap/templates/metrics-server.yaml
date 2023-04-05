@@ -16,6 +16,10 @@ spec:
       repoURL: "https://charts.bitnami.com/bitnami"
       targetRevision: 6.2.15
       chart: metrics-server
+      helm:
+        parameters:
+          - name: "apiService.create"
+            value: "true"
   project: default
   syncPolicy:
     automated:
