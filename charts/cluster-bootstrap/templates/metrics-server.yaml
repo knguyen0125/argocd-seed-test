@@ -20,6 +20,8 @@ spec:
         parameters:
           - name: "apiService.create"
             value: "true"
+          - name: "extraArgs.[0]"
+            value: "--kubelet-insecure-tls"
   project: default
   syncPolicy:
     automated:
